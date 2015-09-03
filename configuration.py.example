@@ -1,0 +1,50 @@
+##########################################################################
+# Configuration file for dynnetip
+# Copyright (C) 2015  Rebecca Nelson
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##########################################################################
+
+# A URL that when queried over HTTP returns a single string containing the
+# current external IPv4 address of the machine that is executing this script. At
+# the time of this file's creation, icanhazip was an appropriate website for
+# such purposes. If this is no longer the case, change this variable to an
+# appropriate value.
+current_ip_url = 'http://ipv4.icanhazip.com/'
+
+# The URL that DNS update requests are sent to.
+ddns_submit_url = ''
+
+# The argument to the host parameter sent to the DDNS service.
+ddns_host = ''
+
+# The domain that is to be updated through DDNS.
+ddns_domain = ''
+
+# The password required by the DDNS service.
+ddns_password = ''
+
+# The path to the file that holds the last updated external IP address. The file
+# will be created by dynnetip; it does not need to already exist. Typically this
+# can be in the dynnetip install directory without problems.
+cache_file_path = '</path/to/dynnetip/install>/ip.txt'
+
+# The path to the log file for dynnetip. The file will be created by dynnetip;
+# it does not need to already exist. Typically this can be in the dynnetip
+# install directory without problems.
+log_file_path = '</path/to/dynnetip/install>/dynnetip.log'
+
+# The maximum size of the log file, in megabytes. The oldest lines will be
+# truncated to make the log file this size before writing any additional lines.
+log_file_max_size = 8
