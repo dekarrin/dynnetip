@@ -77,11 +77,17 @@ def update_dns():
 	except urllib2.URLError:
 		log('Could not establish inet connection to check IP')
 		return
+	except socket.error as e:
+		log('Error while connected to IP address provider: ' + str(e))
+		return
 	if cur_ip_addr != old_ip_addr:
 		try:
 			result = change_record(cur_ip_addr)
 		except urllib2.URLError:
 			log('Could not establish inet connection to update DNS')
+			return
+		except socket.error as e:
+			log('Error while connected to DDNS update server: ' + str(e))
 			return
 		if result['success']:
 			ip = result['ip']
