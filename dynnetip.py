@@ -103,9 +103,10 @@ def update_dns():
 				success_hosts.append(r['host'])
 			else:
 				error_responses.append(r)
+		if len(success_hosts) > 0:
+			write_local_ip_record(configuration.cache_file_path, ip)
 		if len(error_responses) > 0:
 			if len(success_hosts) > 0:
-				write_local_ip_record(configuration.cache_file_path, ip)
 				log('Succeeded updating ' + ', '.join(["'" + str(x) + "'" for x in success_hosts]) + ' DNS to ' + ip.strip() + ', but encountered problems:')
 			else:
 				log('DNS update failed:')
