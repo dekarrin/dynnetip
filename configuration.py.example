@@ -26,8 +26,9 @@ current_ip_url = 'http://ipv4.icanhazip.com/'
 # The URL that DNS update requests are sent to.
 ddns_submit_url = ''
 
-# The argument to the host parameter sent to the DDNS service.
-ddns_host = ''
+# The arguments to the host parameter sent to the DDNS service. Each host in
+# this tuple will be updated in a separate request to the DDNS service.
+ddns_host = ('www', 'subdomain1', 'subdomain2')
 
 # The domain that is to be updated through DDNS.
 ddns_domain = ''
