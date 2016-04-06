@@ -7,14 +7,19 @@ import datetime
 
 import configuration
 
-def change_record(ip):
-	get_req = configuration.ddns_submit_url
-	get_req += '?host=' + configuration.ddns_host
-	get_req += '&domain=' + configuration.ddns_domain
-	get_req += '&password=' + configuration.ddns_password
-	get_req += '&ip=' + ip
-	response = urllib2.urlopen(get_req)
-	return parse_change_response(response)
+def change_records(ip):
+	responses = []
+	for host in configuration.ddns_host:
+		get_req = configuration.ddns_submit_url
+		get_req += '?host=' + host
+		get_req += '&domain=' + configuration.ddns_domain
+		get_req += '&password=' + configuration.ddns_password
+		get_req += '&ip=' + ip
+		ddns_response = urllib2.urlopen(get_req)
+		parsed_response = parse_change_response(ddns_response)
+		parsed_response['host'] = host
+		responses.append(parsed_response)
+	return responses
 
 def parse_change_response(response):
 	text = response.read()
@@ -29,7 +34,6 @@ def parse_change_response(response):
 			new_ip_end = ip_tag_end
 			new_ip = text[new_ip_start:new_ip_end]
 	return {'success': success, 'ip': new_ip, 'response': text}
-			
 	
 def get_current_ip():
 	response = urllib2.urlopen(configuration.current_ip_url)
@@ -82,21 +86,33 @@ def update_dns():
 		return
 	if cur_ip_addr != old_ip_addr:
 		try:
-			result = change_record(cur_ip_addr)
+			results = change_records(cur_ip_addr)
 		except urllib2.URLError:
 			log('Could not establish inet connection to update DNS')
 			return
 		except socket.error as e:
 			log('Error while connected to DDNS update server: ' + str(e))
 			return
-		if result['success']:
-			ip = result['ip']
-			if ip == '':
-				 ip = cur_ip_addr
-			write_local_ip_record(configuration.cache_file_path, ip)
-			log('DNS updated to ' + ip.strip())
+		success_hosts = []
+		error_responses = []
+		ip = cur_ip_addr
+		for r in results:
+			if r['success']:
+				if r['ip'] != '':
+					ip = r['ip']
+				success_hosts.append(r['host'])
+			else:
+				error_responses.append(r)
+		if len(error_responses) > 0:
+			if len(success_hosts) > 0:
+				write_local_ip_record(configuration.cache_file_path, ip)
+				log('Succeeded updating ' + ', '.join(["'" + str(x) + "'" for x in success_hosts]) + ' DNS to ' + ip.strip() + ', but encountered problems:')
+			else:
+				log('DNS update failed:')
+			for r in error_responses:
+				log('\tWhile updating \'' + str(r['host']) + '\': ' + str(r['response']))
 		else:
-			log('DNS update failed. Response: ' + result['response'])
+				log('Updated ' + ', '.join(["'" + str(x) + "'" for x in success_hosts] + ' DNS to ' + ip.strip())
 	else:
 		log("IP checked - no change")
 
