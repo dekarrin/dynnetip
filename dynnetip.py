@@ -112,7 +112,7 @@ def update_dns():
 			for r in error_responses:
 				log('\tWhile updating \'' + str(r['host']) + '\': ' + str(r['response']))
 		else:
-				log('Updated ' + ', '.join(["'" + str(x) + "'" for x in success_hosts] + ' DNS to ' + ip.strip())
+				log('Updated ' + ', '.join(["'" + str(x) + "'" for x in success_hosts]) + ' DNS to ' + ip.strip())
 	else:
 		log("IP checked - no change")
 
